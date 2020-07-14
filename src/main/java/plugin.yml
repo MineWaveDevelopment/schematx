@@ -1,0 +1,13 @@
+name: SchematX
+version: 1.0.0
+api-version: 1.16
+description: Save, load, backup and share your Minecraft buildings
+authors: [FelixBau]
+
+main: de.flxnet.schematx.Schematx
+
+commands:
+   schematx:
+      description: Command to manage your schematics
+      aliases: [schem]
+      usage: /schematx
