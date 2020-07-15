@@ -16,7 +16,7 @@ import lombok.Setter;
 public class SyncActionQueue implements Runnable {
 
 	@Getter
-	private Queue<IAction> actions;
+	private Queue<AbstractAction> actions;
 	
 	@Getter
 	private long lastMillis = 0;
@@ -28,7 +28,7 @@ public class SyncActionQueue implements Runnable {
 		this.actions = Queues.newConcurrentLinkedQueue();
 	}
 	
-	public void process(IAction action) {
+	public void process(AbstractAction action) {
 		this.actions.add(action);
 	}
 

@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 
 import com.google.common.collect.Maps;
 
+import de.flxnet.schematx.block.Cuboid;
 import lombok.Getter;
 
 /**
@@ -23,6 +24,17 @@ public class SelectionManager {
 	
 	public SelectionManager() {
 		this.selections = Maps.newHashMap();
+	}
+	
+	public Cuboid getCuboidSelection(UUID uuid) {
+		Selection selection = getSelection(uuid);
+		if(!hasSelection(uuid)) return null;
+		if(selection.getFirstLocation() == null || selection.getSecondLocation() == null) return null;
+		return new Cuboid(selection.getFirstLocation(), selection.getSecondLocation());
+	}
+	
+	public Cuboid getCuboidSelection(Player player) {
+		return getCuboidSelection(player.getUniqueId());
 	}
 	
 	public Selection getSelection(Player player) {

@@ -16,7 +16,7 @@ import lombok.Setter;
 public class AsyncActionQueue implements Runnable {
 
 	@Getter
-	private Queue<IAction> actions;
+	private Queue<AbstractAction> actions;
 	
 	@Getter
 	private long lastMillis = 0;
