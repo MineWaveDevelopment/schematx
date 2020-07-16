@@ -3,13 +3,13 @@ package de.flxnet.schematx;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.flxnet.schematx.action.AsyncActionQueue;
-import de.flxnet.schematx.action.SyncActionQueue;
+import de.flxnet.schematx.action.AbstractActionQueue;
 import de.flxnet.schematx.command.SchematxCommand;
 import de.flxnet.schematx.config.PluginConfig;
 import de.flxnet.schematx.helper.ConsoleHelper;
 import de.flxnet.schematx.helper.LagMeter;
 import de.flxnet.schematx.listener.PlayerInteractListener;
+import de.flxnet.schematx.schema.SchemaManager;
 import de.flxnet.schematx.selection.SelectionManager;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
@@ -30,13 +30,16 @@ public class Schematx extends JavaPlugin {
 	private PluginConfig pluginConfig;
 	
 	@Getter
-	private AsyncActionQueue asyncActionQueue;
+	private AbstractActionQueue asyncActionQueue;
 	
 	@Getter
-	private SyncActionQueue syncActionQueue;
+	private AbstractActionQueue syncActionQueue;
 	
 	@Getter
 	private SelectionManager selectionManager;
+	
+	@Getter
+	private SchemaManager schemaManager;
 	
 	@Override
 	public void onEnable() {
@@ -46,13 +49,14 @@ public class Schematx extends JavaPlugin {
 		Bukkit.getScheduler().runTaskTimer(this, new LagMeter(), 100L, 1L);
 		initLagMeterDisplay();
 		
-		asyncActionQueue = new AsyncActionQueue();
+		asyncActionQueue = new AbstractActionQueue("AsyncActionQueue", true);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, asyncActionQueue, 1, 1);
 		
-		syncActionQueue = new SyncActionQueue();
+		syncActionQueue = new AbstractActionQueue("SyncActionQueue", true);
 		Bukkit.getScheduler().runTaskTimer(this, syncActionQueue, 1, 1);
 		
 		selectionManager = new SelectionManager();
+		schemaManager = new SchemaManager(true);
 		
 		setupCommands();
 		setupEventListeners();

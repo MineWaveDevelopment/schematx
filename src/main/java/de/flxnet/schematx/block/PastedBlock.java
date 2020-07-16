@@ -1,14 +1,7 @@
 package de.flxnet.schematx.block;
 
-import java.util.Deque;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import org.bukkit.block.data.BlockData;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
-import de.flxnet.schematx.Schematx;
 import lombok.Getter;
 
 /**
@@ -29,48 +22,13 @@ public class PastedBlock {
 	private int z;
 
 	@Getter
-	private String blockDataString;
+	private BlockData blockData;
 
-	public PastedBlock(int x, int y, int z, String blockDataString) {
+	public PastedBlock(int x, int y, int z, BlockData blockData) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.blockDataString = blockDataString;
-	}
-
-	public static class BlockQueue {
-
-		private Deque<PastedBlock> queue = new ConcurrentLinkedDeque<>();
-		private static Map<World, BlockQueue> queueMap = new ConcurrentHashMap<>();
-
-		public void add(PastedBlock block) {
-			queue.add(block);
-		}
-
-		public BlockQueue(final World world) {
-			Bukkit.getScheduler().scheduleSyncRepeatingTask(Schematx.getInstance(), () -> {
-				PastedBlock block = null;
-				boolean hasTime = true;
-				long start = System.currentTimeMillis();
-
-				while ((block = queue.poll()) != null && hasTime) {
-
-					hasTime = System.currentTimeMillis() - start < 10;
-					world.getBlockAt(block.x, block.y, block.z)
-							.setBlockData(Bukkit.createBlockData(block.blockDataString));
-				}
-			}, 1, 1);
-		}
-
-		public static BlockQueue getQueue(World w) {
-			if (!queueMap.containsKey(w)) {
-				BlockQueue blockQueue = new BlockQueue(w);
-				queueMap.put(w, blockQueue);
-
-				return blockQueue;
-			}
-			return queueMap.get(w);
-		}
+		this.blockData = blockData;
 	}
 
 	/**

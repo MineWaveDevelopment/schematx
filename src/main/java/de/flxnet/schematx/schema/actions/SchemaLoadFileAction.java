@@ -15,8 +15,10 @@ import com.google.gson.stream.JsonReader;
 import de.flxnet.schematx.SAccess;
 import de.flxnet.schematx.action.AbstractAction;
 import de.flxnet.schematx.block.PastedBlock;
+import de.flxnet.schematx.block.SyncBlockQueue;
 import de.flxnet.schematx.helper.ConsoleHelper;
 import de.flxnet.schematx.helper.JsonHelper;
+import de.flxnet.schematx.helper.PersistenceHelper;
 import de.flxnet.schematx.schema.Schema;
 import de.flxnet.schematx.schema.SchemaBlockDescription;
 import lombok.Getter;
@@ -43,10 +45,15 @@ public class SchemaLoadFileAction extends AbstractAction {
 
 		Location paste = getPlayer().getTargetBlock(null, 3).getLocation();
 
-		File file = new File(SAccess.getInstance().getDataFolder(), name + ".json");
+		File file = new File(PersistenceHelper.getSchemaFolder(), name + ".schema");
 
 		try {
-
+			
+			if(!SAccess.getSchemaManager().exists(name)) {
+				ConsoleHelper.player(getPlayer(), "§6A schema named §b" + name + " §6not exists");
+				return;
+			}
+			
 			Schema schema = JsonHelper.getGson().fromJson(new JsonReader(new FileReader(file)), Schema.class);
 			List<String> blocks = schema.getBlocks();
 
@@ -55,11 +62,9 @@ public class SchemaLoadFileAction extends AbstractAction {
 			for (String block : blocks) {
 
 				SchemaBlockDescription description = SchemaBlockDescription.fromString(block);
-				Location p = paste.clone().add(description.getDifferenceX(), description.getDifferenceY(),
-						description.getDifferenceZ());
-				PastedBlock pastedBlock = new PastedBlock(p.getBlockX(), p.getBlockY(), p.getBlockZ(),
-						description.getBlockDataString());
-				PastedBlock.BlockQueue.getQueue(getPlayer().getWorld()).add(pastedBlock);
+				Location p = paste.clone().add(description.getDifferenceX(), description.getDifferenceY(), description.getDifferenceZ());
+				PastedBlock pastedBlock = new PastedBlock(p.getBlockX(), p.getBlockY(), p.getBlockZ(), description.createBukkitBlockData());
+				SyncBlockQueue.getQueue(getPlayer().getWorld()).add(pastedBlock);
 				counter++;
 
 			}

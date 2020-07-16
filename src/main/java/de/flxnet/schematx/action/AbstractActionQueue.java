@@ -13,8 +13,14 @@ import lombok.Setter;
  * Copyright (c) 2015-2020 by FLXnet
  * @author Felix
  */
-public class AsyncActionQueue implements Runnable {
+public class AbstractActionQueue implements Runnable {
 
+	@Getter
+	private String name;
+	
+	@Getter @Setter
+	private boolean debug;
+	
 	@Getter
 	private Queue<AbstractAction> actions;
 	
@@ -24,7 +30,9 @@ public class AsyncActionQueue implements Runnable {
 	@Getter @Setter
 	private int interval = 10;
 	
-	public AsyncActionQueue() {
+	public AbstractActionQueue(String name, boolean debug) {
+		this.name = name;
+		this.debug = debug;
 		this.actions = Queues.newConcurrentLinkedQueue();
 	}
 	
@@ -36,16 +44,17 @@ public class AsyncActionQueue implements Runnable {
 	public void run() {
 		long currentMillis = System.currentTimeMillis();
 		
+		if(actions.size() == 0) return;
+		
 		if((currentMillis - lastMillis) >= interval) {
 			lastMillis = currentMillis;
 			
-			if(actions.size() == 0) return;
-			
-			IAction action = this.actions.poll();
+			IAction action = actions.poll();
 			if(action == null) return;
 			
 			action.run();
-			System.out.println("[AsyncActionQueue] Running " + action.getClass().getSimpleName());
+			
+			if(debug) System.out.println("[" + name + "] Running " + action.getClass().getSimpleName());
 		}
 	}
 	

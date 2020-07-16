@@ -1,5 +1,7 @@
 package de.flxnet.schematx.command;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import de.flxnet.schematx.action.AsyncActions;
 import de.flxnet.schematx.block.Cuboid;
 import de.flxnet.schematx.helper.ConsoleHelper;
 import de.flxnet.schematx.helper.CuboidHelper;
+import de.flxnet.schematx.helper.PersistenceHelper;
 import de.flxnet.schematx.helper.SelectionHelper;
 import de.flxnet.schematx.selection.Selection;
 import net.minecraft.server.v1_16_R1.Particles;
@@ -45,34 +48,60 @@ public class SchematxCommand implements CommandExecutor, TabCompleter {
 		}
 		
 		/*
-		 * Load schema from file command
+		 * Load a schema
 		 */
-		if(args.length == 1 && args[0].equalsIgnoreCase("fileload")) {
+		if(args.length == 1 && args[0].equalsIgnoreCase("load")) {
 			ConsoleHelper.player(player, "§6You are missing an argument §b[name]");
 			return true;
 		}
 		
-		if(args.length == 2 && args[0].equalsIgnoreCase("fileload")) {
+		if(args.length == 2 && args[0].equalsIgnoreCase("load")) {
 			
 			String name = args[1].trim();
-			AsyncActions.schemaLoadFileAction(player, name);
+			//AsyncActions.schemaLoadFileAction(player, name);
+			AsyncActions.schemaLoadAction(player, name);
 			
 			return true;
 		}
 		
 		/*
-		 * Save schema to file command
+		 * Create a schema
 		 */
-		if(args.length == 1 && args[0].equalsIgnoreCase("filesave")) {
+		if(args.length == 1 && args[0].equalsIgnoreCase("create")) {
 			ConsoleHelper.player(player, "§6You are missing an argument §b[name]");
 			return true;
 		}
 		
-		if(args.length == 2 && args[0].equalsIgnoreCase("filesave")) {
+		if(args.length == 2 && args[0].equalsIgnoreCase("create")) {
 			
 			String name = args[1].trim();
-			AsyncActions.schemaSaveFileAction(player, name);
+			//AsyncActions.schemaSaveFileAction(player, name);
+			AsyncActions.schemaCreateAction(player, name);
 			
+			return true;
+		}
+		
+		/*
+		 * List local saved schemata
+		 */
+		if(args.length == 1 && args[0].equalsIgnoreCase("listlocal")) {
+			
+			File schemataFolder = PersistenceHelper.getSchemaFolder();
+			
+			Arrays.stream(schemataFolder.listFiles()).sorted().forEach(file -> {
+				
+				player.sendMessage("§a" + file.getName() + " §d" + file.length() + "b");
+				
+			});
+			
+			return true;
+		}
+		
+		/*
+		 * Select the complete chunk (16x16x256) currently standing on
+		 */
+		if(args.length == 1 && args[0].equalsIgnoreCase("chunksel")) {
+			AsyncActions.selectCurrentChunkAction(player);
 			return true;
 		}
 		
@@ -105,6 +134,22 @@ public class SchematxCommand implements CommandExecutor, TabCompleter {
 		}
 		
 		/*
+		 * Show amount of schemata in the buffer
+		 */
+		if(args.length == 1 && args[0].equalsIgnoreCase("buffer")) {
+			
+			int bufferSize = SAccess.getSchemaManager().getBufferSize();
+			if(bufferSize == 0) {
+				ConsoleHelper.player(player, "§6The schema buffer is currently empty");
+				return true;
+			}
+			
+			ConsoleHelper.player(player, "§6There are currently §d" + bufferSize + " §6schemata in the buffer");
+			
+			return true;
+		}
+		
+		/*
 		 * Command to give the SchematX selection tool to a player
 		 */
 		if(args.length == 1 && args[0].equalsIgnoreCase("tool")) {
@@ -119,7 +164,7 @@ public class SchematxCommand implements CommandExecutor, TabCompleter {
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		if(args.length == 1) return Lists.newArrayList("tool", "filesave", "fileload");
+		if(args.length == 1) return Lists.newArrayList("tool", "create", "load", "loc1", "loc2", "chunksel", "buffer", "listlocal");
 		return Collections.emptyList();
 	}
 

@@ -32,4 +32,10 @@ public class PersistenceHelper {
 		return dataFile;
 	}
 	
+	public static File getSchemaFolder() {
+		File schemaFolder = new File(Schematx.getInstance().getDataFolder(), "schema");
+		if(!schemaFolder.exists()) schemaFolder.mkdirs();
+		return schemaFolder;
+	}
+	
 }

@@ -1,7 +1,9 @@
 package de.flxnet.schematx.schema;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 import com.google.gson.annotations.Expose;
 
@@ -48,6 +50,10 @@ public class SchemaBlockDescription {
 	@Override
 	public String toString() {
 		return differenceX + ";" + differenceY + ";" + differenceZ + ";" + blockDataString;
+	}
+	
+	public BlockData createBukkitBlockData() {
+		return Bukkit.createBlockData(blockDataString);
 	}
 	
 	public static SchemaBlockDescription fromString(String data) {

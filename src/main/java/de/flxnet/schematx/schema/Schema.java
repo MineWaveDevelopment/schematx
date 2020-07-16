@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import com.google.gson.annotations.Expose;
 
 import de.flxnet.schematx.block.Cuboid;
+import de.flxnet.schematx.helper.JsonHelper;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,6 +53,10 @@ public class Schema {
 		this.owner = owner;
 		this.created = System.currentTimeMillis();
 		this.blocks = cuboid.getSchemaBlockDescriptionList().stream().map(SchemaBlockDescription::toString).collect(Collectors.toList());
+	}
+	
+	public String getJsonData() {
+		return JsonHelper.getGson().toJson(this);
 	}
 	
 }

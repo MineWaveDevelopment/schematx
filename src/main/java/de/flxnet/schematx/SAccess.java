@@ -1,8 +1,8 @@
 package de.flxnet.schematx;
 
-import de.flxnet.schematx.action.AsyncActionQueue;
-import de.flxnet.schematx.action.SyncActionQueue;
+import de.flxnet.schematx.action.AbstractActionQueue;
 import de.flxnet.schematx.config.PluginConfig;
+import de.flxnet.schematx.schema.SchemaManager;
 import de.flxnet.schematx.selection.SelectionManager;
 import lombok.Getter;
 
@@ -21,12 +21,15 @@ public class SAccess {
 	private static PluginConfig config = instance.getPluginConfig();
 	
 	@Getter
-	private static AsyncActionQueue asyncActionQueue = instance.getAsyncActionQueue();
+	private static AbstractActionQueue asyncActionQueue = instance.getAsyncActionQueue();
 	
 	@Getter
-	private static SyncActionQueue syncActionQueue = instance.getSyncActionQueue();
+	private static AbstractActionQueue syncActionQueue = instance.getSyncActionQueue();
 	
 	@Getter
 	private static SelectionManager selectionManager = instance.getSelectionManager();
+	
+	@Getter
+	private static SchemaManager schemaManager = instance.getSchemaManager();
 	
 }

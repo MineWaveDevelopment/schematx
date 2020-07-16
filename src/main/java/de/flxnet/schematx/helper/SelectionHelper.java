@@ -1,5 +1,6 @@
 package de.flxnet.schematx.helper;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -30,7 +31,11 @@ public class SelectionHelper {
 	}
 	
 	public static String getLocationString(Location location) {
-		return "[" + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() + "]";
+		return "[" + location.getWorld().getName() + ", " + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ() + "]";
+	}
+	
+	public static String getChunkString(Chunk chunk) {
+		return "[" + chunk.getWorld().getName() + ", " + chunk.getX() + ", " +chunk.getZ() + "]";
 	}
 	
 	public static void hilightSelection(Selection selection) {
