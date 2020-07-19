@@ -74,7 +74,7 @@ public class SchemaManager {
 	
 	public boolean exists(String name) {
 		if(hasInBuffer(name)) return true;
-		if(load(name) == SchemaResult.Exists) return true;
+		if(load(name) == SchemaResult.Loaded) return true;
 		return false;
 	}
 	

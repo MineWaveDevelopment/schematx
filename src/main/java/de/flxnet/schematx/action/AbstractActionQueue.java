@@ -52,9 +52,8 @@ public class AbstractActionQueue implements Runnable {
 			IAction action = actions.poll();
 			if(action == null) return;
 			
-			action.run();
-			
 			if(debug) System.out.println("[" + name + "] Running " + action.getClass().getSimpleName());
+			action.run();
 		}
 	}
 	

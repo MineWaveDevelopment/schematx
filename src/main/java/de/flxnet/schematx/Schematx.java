@@ -56,7 +56,7 @@ public class Schematx extends JavaPlugin {
 		Bukkit.getScheduler().runTaskTimer(this, syncActionQueue, 1, 1);
 		
 		selectionManager = new SelectionManager();
-		schemaManager = new SchemaManager(true);
+		schemaManager = new SchemaManager(false);
 		
 		setupCommands();
 		setupEventListeners();

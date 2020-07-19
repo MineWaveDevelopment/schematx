@@ -1,6 +1,4 @@
-package de.flxnet.schematx.schema.actions;
-
-import java.util.List;
+package de.flxnet.schematx.schema.action;
 
 import org.bukkit.entity.Player;
 
@@ -9,7 +7,6 @@ import de.flxnet.schematx.action.AbstractAction;
 import de.flxnet.schematx.block.Cuboid;
 import de.flxnet.schematx.helper.ConsoleHelper;
 import de.flxnet.schematx.schema.Schema;
-import de.flxnet.schematx.schema.SchemaBlockDescription;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,8 +36,7 @@ public class SchemaCreateAction extends AbstractAction {
 			return;
 		}
 		
-		List<SchemaBlockDescription> schemaBlockDescriptions = cuboid.getSchemaBlockDescriptionList();
-		Schema schema = new Schema(name, getPlayer().getUniqueId(), schemaBlockDescriptions);
+		Schema schema = new Schema(name, getPlayer().getUniqueId(), cuboid);
 		
 		boolean added = SAccess.getSchemaManager().add(schema);
 		

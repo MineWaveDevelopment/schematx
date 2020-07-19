@@ -1,8 +1,7 @@
-package de.flxnet.schematx.schema.actions;
+package de.flxnet.schematx.schema.action;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.bukkit.entity.Player;
 
@@ -16,7 +15,6 @@ import de.flxnet.schematx.helper.ConsoleHelper;
 import de.flxnet.schematx.helper.JsonHelper;
 import de.flxnet.schematx.helper.PersistenceHelper;
 import de.flxnet.schematx.schema.Schema;
-import de.flxnet.schematx.schema.SchemaBlockDescription;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,8 +44,7 @@ public class SchemaSaveFileAction extends AbstractAction {
 			return;
 		}
 		
-		List<SchemaBlockDescription> schemaBlockDescriptions = cuboid.getSchemaBlockDescriptionList();
-		Schema schema = new Schema(name, getPlayer().getUniqueId(), schemaBlockDescriptions);
+		Schema schema = new Schema(name, getPlayer().getUniqueId(), cuboid);
 		String json = JsonHelper.getGson().toJson(schema);
 		
 		try {

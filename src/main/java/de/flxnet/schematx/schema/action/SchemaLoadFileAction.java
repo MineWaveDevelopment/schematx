@@ -1,4 +1,4 @@
-package de.flxnet.schematx.schema.actions;
+package de.flxnet.schematx.schema.action;
 
 import java.io.File;
 import java.io.FileNotFoundException;

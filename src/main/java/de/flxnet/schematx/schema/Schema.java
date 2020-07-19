@@ -18,10 +18,6 @@ import lombok.Setter;
  * @author Felix
  */
 public class Schema {
-
-	@Expose
-	@Getter @Setter
-	private UUID id;
 	
 	@Expose
 	@Getter @Setter
@@ -36,24 +32,43 @@ public class Schema {
 	private long created;
 	
 	@Expose
+	@Getter @Setter
+	private Size size;
+	
+	@Expose
+	@Getter @Setter
+	private Visibility visibility;
+	
+	@Expose
+	@Getter @Setter
+	private int downloads;
+	
+	@Expose
 	@Getter
 	private List<String> blocks;
 	
+	public Schema(String name, UUID owner, Cuboid cuboid, Visibility visibility, int downloads) {
+		this.name = name;
+		this.owner = owner;
+		this.created = System.currentTimeMillis();
+		this.blocks = cuboid.getSchemaBlockDescriptionList().stream().map(SchemaBlockDescription::toString).collect(Collectors.toList());
+		this.size = Size.fromCuboid(cuboid);
+		this.visibility = visibility;
+		this.downloads = downloads;
+	}
+	
+	public Schema(String name, UUID owner, Cuboid cuboid) {
+		this(name, owner, cuboid, Visibility.Private, 0);
+	}
+	
+	/*
 	public Schema(String name, UUID owner, List<SchemaBlockDescription> blocks) {
-		this.id = UUID.randomUUID();
 		this.name = name;
 		this.owner = owner;
 		this.created = System.currentTimeMillis();
 		this.blocks = blocks.stream().map(SchemaBlockDescription::toString).collect(Collectors.toList());
 	}
-	
-	public Schema(String name, UUID owner, Cuboid cuboid) {
-		this.id = UUID.randomUUID();
-		this.name = name;
-		this.owner = owner;
-		this.created = System.currentTimeMillis();
-		this.blocks = cuboid.getSchemaBlockDescriptionList().stream().map(SchemaBlockDescription::toString).collect(Collectors.toList());
-	}
+	*/
 	
 	public String getJsonData() {
 		return JsonHelper.getGson().toJson(this);

@@ -1,4 +1,4 @@
-package de.flxnet.schematx.selection.actions;
+package de.flxnet.schematx.selection.action;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;

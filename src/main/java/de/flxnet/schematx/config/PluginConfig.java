@@ -19,12 +19,17 @@ public class PluginConfig extends YamlConfig {
 	private void init() {
 		FileConfiguration cfg = getConfig();
 		cfg.addDefault("SchematX.SelectionToolMaterial", "GOLDEN_BOOTS");
+		cfg.addDefault("SchematX.CloudUrl", "http://localhost:1337/");
 		cfg.options().copyDefaults(true);
 		this.save();
 	}
 	
 	public Material getSelectionToolMaterial() {
 		return Material.valueOf(getConfig().getString("SchematX.SelectionToolMaterial"));
+	}
+	
+	public String getCloudUrl() {
+		return getConfig().getString("SchematX.CloudUrl");
 	}
 
 }

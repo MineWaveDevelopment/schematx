@@ -32,6 +32,9 @@ import net.minecraft.server.v1_16_R1.Particles;
  */
 public class SchematxCommand implements CommandExecutor, TabCompleter {
 
+	private static List<String> subCommands = Lists.newArrayList("tool", "profile", "loc1", "loc2", "chunksel", "list", "save", "paste",
+																	"loadlocal", "createlocal", "listlocal", "mark", "buffer");
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		
@@ -47,53 +50,60 @@ public class SchematxCommand implements CommandExecutor, TabCompleter {
 			return true;
 		}
 		
+		if(args.length >= 1) {
+			String subCommand = args[0];
+			if(!subCommands.contains(subCommand)) {
+				ConsoleHelper.player(player, "§6Unknown subcommand §b[" + subCommand + "]");
+				ConsoleHelper.player(player, "§bAvailable: §a" + Lists.newArrayList(subCommands));
+				return true;
+			}
+		}
+		
+		////////////////
+		// PRODUCTION //
+		////////////////
+		
 		/*
-		 * Load a schema
+		 * Create and save a schema to the cloud
 		 */
-		if(args.length == 1 && args[0].equalsIgnoreCase("load")) {
+		if(args.length == 1 && args[0].equalsIgnoreCase("save")) {
 			ConsoleHelper.player(player, "§6You are missing an argument §b[name]");
 			return true;
 		}
 		
-		if(args.length == 2 && args[0].equalsIgnoreCase("load")) {
-			
+		if(args.length == 2 && args[0].equalsIgnoreCase("save")) {
 			String name = args[1].trim();
-			//AsyncActions.schemaLoadFileAction(player, name);
-			AsyncActions.schemaLoadAction(player, name);
-			
+			AsyncActions.schemaSaveAction(player, name);
 			return true;
 		}
 		
 		/*
-		 * Create a schema
+		 * Load and paste a cloud-saved schema
 		 */
-		if(args.length == 1 && args[0].equalsIgnoreCase("create")) {
+		if(args.length == 1 && args[0].equalsIgnoreCase("paste")) {
 			ConsoleHelper.player(player, "§6You are missing an argument §b[name]");
 			return true;
 		}
 		
-		if(args.length == 2 && args[0].equalsIgnoreCase("create")) {
-			
+		if(args.length == 2 && args[0].equalsIgnoreCase("paste")) {
 			String name = args[1].trim();
-			//AsyncActions.schemaSaveFileAction(player, name);
-			AsyncActions.schemaCreateAction(player, name);
-			
+			AsyncActions.cloudLoadSchemaAction(player, name);
 			return true;
 		}
 		
 		/*
-		 * List local saved schemata
+		 * List a players cloud-saved schemata
 		 */
-		if(args.length == 1 && args[0].equalsIgnoreCase("listlocal")) {
-			
-			File schemataFolder = PersistenceHelper.getSchemaFolder();
-			
-			Arrays.stream(schemataFolder.listFiles()).sorted().forEach(file -> {
-				
-				player.sendMessage("§a" + file.getName() + " §d" + file.length() + "b");
-				
-			});
-			
+		if(args.length == 1 && args[0].equalsIgnoreCase("list")) {
+			AsyncActions.cloudListSchemata(player);
+			return true;
+		}
+		
+		/*
+		 * Retrieve information about a cloud-saved player profile
+		 */
+		if(args.length == 1 && args[0].equalsIgnoreCase("profile")) {
+			AsyncActions.cloudUserProfileInfo(player);
 			return true;
 		}
 		
@@ -120,6 +130,74 @@ public class SchematxCommand implements CommandExecutor, TabCompleter {
 			AsyncActions.selectSecondLocationAction(player, player.getLocation());
 			return true;
 		}
+		
+		/*
+		 * Command to give the SchematX selection tool to a player
+		 */
+		if(args.length == 1 && args[0].equalsIgnoreCase("tool")) {
+			ItemStack itemStack = SelectionHelper.getSelectionTool();
+			player.getInventory().addItem(itemStack);
+			ConsoleHelper.player(player, "§bSchematX selection tool §7(" + itemStack.getType() + ") §bhas been added to your inventory.");
+			return true;
+		}
+		
+		/////////////////////
+		// LOCAL FUNCTIONS //
+		/////////////////////
+		
+		/*
+		 * Load a schema
+		 */
+		if(args.length == 1 && args[0].equalsIgnoreCase("loadlocal")) {
+			ConsoleHelper.player(player, "§6You are missing an argument §b[name]");
+			return true;
+		}
+		
+		if(args.length == 2 && args[0].equalsIgnoreCase("loadlocal")) {
+			
+			String name = args[1].trim();
+			//AsyncActions.schemaLoadFileAction(player, name);
+			AsyncActions.schemaLoadAction(player, name);
+			
+			return true;
+		}
+		
+		/*
+		 * Create a schema
+		 */
+		if(args.length == 1 && args[0].equalsIgnoreCase("createlocal")) {
+			ConsoleHelper.player(player, "§6You are missing an argument §b[name]");
+			return true;
+		}
+		
+		if(args.length == 2 && args[0].equalsIgnoreCase("createlocal")) {
+			
+			String name = args[1].trim();
+			//AsyncActions.schemaSaveFileAction(player, name);
+			AsyncActions.schemaCreateAction(player, name);
+			
+			return true;
+		}
+		
+		/*
+		 * List local saved schemata
+		 */
+		if(args.length == 1 && args[0].equalsIgnoreCase("listlocal")) {
+			
+			File schemataFolder = PersistenceHelper.getSchemaFolder();
+			
+			Arrays.stream(schemataFolder.listFiles()).sorted().forEach(file -> {
+				
+				player.sendMessage("§a" + file.getName() + " §d" + file.length() + "b");
+				
+			});
+			
+			return true;
+		}
+		
+		/////////////
+		// TESTING //
+		/////////////
 		
 		/*
 		 * Test command for mark / hilight function
@@ -149,22 +227,12 @@ public class SchematxCommand implements CommandExecutor, TabCompleter {
 			return true;
 		}
 		
-		/*
-		 * Command to give the SchematX selection tool to a player
-		 */
-		if(args.length == 1 && args[0].equalsIgnoreCase("tool")) {
-			ItemStack itemStack = SelectionHelper.getSelectionTool();
-			player.getInventory().addItem(itemStack);
-			ConsoleHelper.player(player, "§bSchematX selection tool §7(" + itemStack.getType() + ") §bhas been added to your inventory.");
-			return true;
-		}
-		
 		return true;
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
-		if(args.length == 1) return Lists.newArrayList("tool", "create", "load", "loc1", "loc2", "chunksel", "buffer", "listlocal");
+		if(args.length == 1) return subCommands;
 		return Collections.emptyList();
 	}
 
